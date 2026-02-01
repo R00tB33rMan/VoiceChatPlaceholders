@@ -4,7 +4,8 @@ public enum EStatus {
 	TALKING("talking"),
 	WHISPERING("whispering"),
 	QUIET("quiet"),
-	DISABLED("disabled");
+	DISABLED("disabled"),
+	NOT_INSTALLED("not_installed");
 
 	public final String key;
 

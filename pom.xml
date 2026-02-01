@@ -6,7 +6,7 @@
 
     <groupId>com.bocktom</groupId>
     <artifactId>VoiceChatPlaceholders</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <packaging>jar</packaging>
 
     <name>VoiceChatPlaceholders</name>
@@ -16,7 +16,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Custom -->
-        <server.dir>D:/dev/.mcdev/static/server_20_4</server.dir>
+        <server.dir>D:/dev/.mcdev/static/paper_21_11</server.dir>
     </properties>
 
     <build>
@@ -97,13 +97,13 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.20.6-R0.1-SNAPSHOT</version>
+            <version>1.21.11-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>de.maxhenkel.voicechat</groupId>
             <artifactId>voicechat-api</artifactId>
-            <version>2.1.12</version>
+            <version>2.6.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

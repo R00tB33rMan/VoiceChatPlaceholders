@@ -37,4 +37,6 @@ public final class VoiceChatPlaceholders extends JavaPlugin implements CommandEx
 		EStatus status = voicechatPlugin.getStatus(uniqueId);
 		return getConfig().getString(status.key);
 	}
+
+
 }

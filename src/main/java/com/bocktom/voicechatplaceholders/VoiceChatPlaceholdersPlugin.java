@@ -4,6 +4,7 @@ import de.maxhenkel.voicechat.api.*;
 import de.maxhenkel.voicechat.api.events.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.codehaus.plexus.util.ReflectionUtils;
 
 import java.util.HashSet;
 import java.util.UUID;
@@ -49,6 +50,8 @@ public class VoiceChatPlaceholdersPlugin implements VoicechatPlugin {
 		registration.registerEvent(MicrophonePacketEvent.class, this::onMicrophoneEvent);
 		registration.registerEvent(PlayerConnectedEvent.class, this::onJoinEvent);
 		registration.registerEvent(PlayerDisconnectedEvent.class, this::onLeaveEvent);
+
+		registration.registerEvent(VoicechatServerStoppedEvent.class, this::onVCStopped);
 	}
 
 	private void onMicrophoneEvent(MicrophonePacketEvent event) {
@@ -78,8 +81,13 @@ public class VoiceChatPlaceholdersPlugin implements VoicechatPlugin {
 
 	public EStatus getStatus(UUID target) {
 		VoicechatConnection connection = api.getConnectionOf(target);
+
 		if(connection == null || connection.isDisabled()) {
 			return EStatus.DISABLED;
+		}
+
+		if(!connection.isInstalled()) {
+			return EStatus.NOT_INSTALLED;
 		}
 
 		Player player = Bukkit.getPlayer(target);
@@ -99,6 +107,10 @@ public class VoiceChatPlaceholdersPlugin implements VoicechatPlugin {
 		}
 
 		return player.isSneaking() ? EStatus.WHISPERING : EStatus.TALKING;
+	}
+
+	private void onVCStopped(VoicechatServerStoppedEvent voicechatServerStoppedEvent) {
+		getLogger().info("Voicechat event: " + voicechatServerStoppedEvent.getClass().getSimpleName());
 	}
 
 }

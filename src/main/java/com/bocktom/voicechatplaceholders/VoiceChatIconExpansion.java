@@ -24,9 +24,10 @@ public class VoiceChatIconExpansion extends PlaceholderExpansion {
 
 	@Override
 	public @Nullable String onPlaceholderRequest(Player player, @NotNull String raw) {
-		if(player == null) {
+		if (player == null) {
 			return "";
 		}
+
 		return VoiceChatPlaceholders.plugin.getStatusPlaceholder(player.getUniqueId());
 	}
 }

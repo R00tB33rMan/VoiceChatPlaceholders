@@ -23,20 +23,16 @@ public final class VoiceChatPlaceholders extends JavaPlugin implements CommandEx
 			voicechatPlugin = new VoiceChatPlaceholdersPlugin(this);
 			service.registerPlugin(voicechatPlugin);
 			getLogger().info("VoiceChatPlaceholders has successfully registered with VoiceChat!");
-		}
-		else {
+		} else {
 			getLogger().severe("Could not load VoiceChat service!");
 			getServer().getPluginManager().disablePlugin(this);
 		}
 
 		new VoiceChatIconExpansion().register();
-		//new PlayerNameExpansion().register();
 	}
 
 	public String getStatusPlaceholder(UUID uniqueId) {
 		EStatus status = voicechatPlugin.getStatus(uniqueId);
 		return getConfig().getString(status.key);
 	}
-
-
 }

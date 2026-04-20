@@ -4,7 +4,6 @@ import de.maxhenkel.voicechat.api.*;
 import de.maxhenkel.voicechat.api.events.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.codehaus.plexus.util.ReflectionUtils;
 
 import java.util.HashSet;
 import java.util.UUID;
@@ -24,6 +23,7 @@ public class VoiceChatPlaceholdersPlugin implements VoicechatPlugin {
 
 	public VoiceChatPlaceholdersPlugin(VoiceChatPlaceholders plugin) {
 		this.plugin = plugin;
+
 		TALK_TIMEOUT_MS = plugin.getConfig().getInt("talk_timeout_ms", 300);
 	}
 
@@ -35,13 +35,11 @@ public class VoiceChatPlaceholdersPlugin implements VoicechatPlugin {
 	@Override
 	public void initialize(VoicechatApi voicechatApi) {
 		api = (VoicechatServerApi) voicechatApi;
-
-		Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+		Bukkit.getGlobalRegionScheduler().runAtFixedRate(plugin, task -> {
 			long now = System.currentTimeMillis();
-			LAST_PACKET.entrySet().removeIf(e -> now - e.getValue() > 10_000); // passive Säuberung
+			LAST_PACKET.entrySet().removeIf(e -> now - e.getValue() > 10_000); // passive cleanup
 		}, 200L, 200L);
 	}
-
 
 	@Override
 	public void registerEvents(EventRegistration registration) {
@@ -55,13 +53,14 @@ public class VoiceChatPlaceholdersPlugin implements VoicechatPlugin {
 	}
 
 	private void onMicrophoneEvent(MicrophonePacketEvent event) {
-		if(event.getSenderConnection() == null)
+		if (event.getSenderConnection() == null) {
 			return;
+		}
 
 		ServerPlayer player = event.getSenderConnection().getPlayer();
-
-		if(player == null)
+		if (player == null) {
 			return;
+		}
 
 		LAST_PACKET.put(player.getUuid(), System.currentTimeMillis());
 	}
@@ -82,27 +81,26 @@ public class VoiceChatPlaceholdersPlugin implements VoicechatPlugin {
 	public EStatus getStatus(UUID target) {
 		VoicechatConnection connection = api.getConnectionOf(target);
 
-		if(connection == null || connection.isDisabled()) {
+		if (connection == null || connection.isDisabled()) {
 			return EStatus.DISABLED;
 		}
 
-		if(!connection.isInstalled()) {
+		if (!connection.isInstalled()) {
 			return EStatus.NOT_INSTALLED;
 		}
 
 		Player player = Bukkit.getPlayer(target);
-		if(player == null) {
+		if (player == null) {
 			return EStatus.DISABLED;
 		}
 
-
-		if(!IN_VC.contains(target)) {
+		if (!IN_VC.contains(target)) {
 			return EStatus.DISABLED;
 		}
 
 		Long lastPacket = LAST_PACKET.get(target);
 		boolean isTalking = lastPacket != null && (System.currentTimeMillis() - lastPacket) <= TALK_TIMEOUT_MS;
-		if(!isTalking) {
+		if (!isTalking) {
 			return EStatus.QUIET;
 		}
 
@@ -112,5 +110,4 @@ public class VoiceChatPlaceholdersPlugin implements VoicechatPlugin {
 	private void onVCStopped(VoicechatServerStoppedEvent voicechatServerStoppedEvent) {
 		getLogger().info("Voicechat event: " + voicechatServerStoppedEvent.getClass().getSimpleName());
 	}
-
 }
